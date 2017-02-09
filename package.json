@@ -1,0 +1,32 @@
+{
+  "name": "log-factory",
+  "version": "0.0.0",
+  "author": "",
+  "main": "lib/index.js",
+  "dependencies": {
+    "fs-extra": "^2.0.0",
+    "lodash": "^4.17.4",
+    "path": "^0.12.7",
+    "stack-trace": "0.0.9",
+    "winston": "^2.3.1"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "0.0.37",
+    "@types/lodash": "^4.14.52",
+    "@types/stack-trace": "0.0.28",
+    "@types/winston": "^2.2.0",
+    "gulp": "^3.9.1",
+    "gulp-shell": "^0.5.2",
+    "gulp-tslint": "^7.1.0",
+    "gulp-typescript": "^3.1.4",
+    "merge2": "^1.0.3",
+    "mocha": "*",
+    "run-sequence": "^1.2.2",
+    "tslint": "^4.4.2",
+    "typescript": "^2.1.6"
+  },
+  "scripts": {
+    "main": "gulp buildrun",
+    "test": "gulp build && mocha"
+  }
+}
