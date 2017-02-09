@@ -24,7 +24,6 @@
     "merge2": "^1.0.3",
     "mocha": "*",
     "proxyquire": "^1.7.11",
-    "release-helper": "PieLabs/release-helper#v1.3.0",
     "run-sequence": "^1.2.2",
     "sinon": "^1.17.7",
     "tslint": "^4.4.2",
@@ -32,6 +31,7 @@
   },
   "scripts": {
     "main": "./node_modules/.bin/gulp build",
+    "release": "./node_modules/.bin/gulp release",
     "test": "./node_modules/.bin/gulp build && ./node_modules/.bin/mocha",
     "live-test": "./node_modules/.bin/gulp watch"
   }

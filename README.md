@@ -16,3 +16,8 @@ let logger = buildLogger();
 # build 
 
 `npm run main`
+
+
+## TODO
+
+add `release-helper` to the build (will need to be updated to work with gulp 4.0).

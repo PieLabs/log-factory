@@ -10,7 +10,7 @@ const tsProject = ts.createProject('tsconfig.json');
 const mocha = require('gulp-mocha');
 const releaseHelper = require('release-helper');
 
-releaseHelper.init(gulp);
+//TODO: Add releaseHelper.init(gulp); - once it works w/ gulp 4.0
 
 gulp.task('default', done => runseq('clean', 'build', done));
 
