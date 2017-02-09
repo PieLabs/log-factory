@@ -1,9 +1,9 @@
 import * as winston from 'winston';
 import * as path from 'path';
 import * as _ from 'lodash';
-import * as fs from 'fs-extra';
+import * as fs from 'fs';
 import * as stackTrace from 'stack-trace';
-
+//levels: error > warn > info > verbose > debug > silly
 
 let config = {
   'default': 'info'
@@ -20,16 +20,14 @@ let mkLogConfig = (label: string, level: string) => {
 
 const logger = addLogger('LOG_FACTORY');
 
-//levels: error > warn > info > verbose > debug > silly
-
-
 export let init = (log): void => {
 
   logger.debug('init: ', log);
-  console.log('init: ', log);
+
   if (!log) {
     return;
   }
+
   if (_.isObject(log)) {
     setConfig(log);
   } else if (isLogLevel(log)) {
@@ -66,7 +64,7 @@ function addLogger(label, level?: string): winston.LoggerInstance {
 }
 
 
-export let isLogLevel = (l): Boolean => _.includes(['error', 'warn', 'info', 'verbose', 'debug', 'silly'], l);
+let isLogLevel = (l): Boolean => _.includes(['error', 'warn', 'info', 'verbose', 'debug', 'silly'], l);
 
 
 export let setDefaultLevel = (l) => {
@@ -79,19 +77,20 @@ export let setDefaultLevel = (l) => {
   });
 };
 
-export let setConfigFromFile = (configPath) => {
-  var cfg = fs.readJsonSync(configPath);
+let setConfigFromFile = (configPath) => {
+  var cfg = JSON.parse(fs.readFileSync(configPath, 'utf8'));
   logger.debug(cfg);
   setConfig(cfg);
 };
 
-export let setConfig = (cfg) => {
+let setConfig = (cfg) => {
   config = _.merge({}, config, cfg);
   _.forIn(cfg, (value, key) => {
     addLogger(key, value);
   });
 };
 
+/** get a logger and give it a name */
 export let getLogger = (id: string): winston.LoggerInstance => {
   var existing = winston.loggers.has(id);
 
@@ -102,7 +101,7 @@ export let getLogger = (id: string): winston.LoggerInstance => {
   }
 };
 
-/** get a file logger */
+/** get a logger and name it by it's file name. */
 export let fileLogger = (filename): winston.LoggerInstance => {
   var label;
   var parsed = path.parse(filename);
@@ -115,7 +114,16 @@ export let fileLogger = (filename): winston.LoggerInstance => {
   return getLogger(label);
 }
 
-
+/**
+ * Create a logger and automatically name it by using the filename of the call site.
+ * Eg: 
+ * ```
+ * //my-file.js
+ * import {buildLogger} from 'log-factory';
+ * let logger = buildLogger();
+ * logger.info('hi') //=> emits [INFO] [my-file] hi 
+ * ```
+ */
 export function buildLogger(): winston.LoggerInstance {
   let trace = stackTrace.get();
   let name = trace[1].getFileName();

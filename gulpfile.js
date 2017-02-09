@@ -5,6 +5,7 @@ const runseq = require('run-sequence');
 const tslint = require('gulp-tslint');
 const { remove } = require('fs-extra');
 const merge = require('merge2');
+const sourcemaps = require('gulp-sourcemaps');
 
 const paths = {
   tscripts: {
@@ -40,10 +41,13 @@ let tsProject = ts.createProject('tsconfig.json');
 // ** Compilation ** //
 
 gulp.task('build', function () {
+
   let tsResult = gulp.src('src/**/*.ts') // or tsProject.src()
+    .pipe(sourcemaps.init())
     .pipe(tsProject());
 
   let js = tsResult.js
+    .pipe(sourcemaps.write())
     .pipe(gulp.dest('lib'));
 
   let dts = tsResult.dts
@@ -54,5 +58,6 @@ gulp.task('build', function () {
     dts
   ]);
 });
+
 
 
