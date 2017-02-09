@@ -23,7 +23,7 @@ const logger = addLogger('LOG_FACTORY');
 //levels: error > warn > info > verbose > debug > silly
 
 
-export let init = (log) => {
+export let init = (log): void => {
 
   logger.debug('init: ', log);
   console.log('init: ', log);
@@ -50,7 +50,7 @@ export let init = (log) => {
 };
 
 
-function addLogger(label, level?: string) {
+function addLogger(label, level?: string): winston.LoggerInstance {
 
   level = level ? level : config['default'] || 'info';
   let cfg = mkLogConfig(label, level);
@@ -66,7 +66,7 @@ function addLogger(label, level?: string) {
 }
 
 
-export let isLogLevel = (l) => _.includes(['error', 'warn', 'info', 'verbose', 'debug', 'silly'], l);
+export let isLogLevel = (l): Boolean => _.includes(['error', 'warn', 'info', 'verbose', 'debug', 'silly'], l);
 
 
 export let setDefaultLevel = (l) => {
@@ -92,7 +92,7 @@ export let setConfig = (cfg) => {
   });
 };
 
-export let getLogger = (id: string) => {
+export let getLogger = (id: string): winston.LoggerInstance => {
   var existing = winston.loggers.has(id);
 
   if (existing) {
@@ -103,7 +103,7 @@ export let getLogger = (id: string) => {
 };
 
 /** get a file logger */
-export let fileLogger = (filename) => {
+export let fileLogger = (filename): winston.LoggerInstance => {
   var label;
   var parsed = path.parse(filename);
 
@@ -116,7 +116,7 @@ export let fileLogger = (filename) => {
 }
 
 
-export function buildLogger() {
+export function buildLogger(): winston.LoggerInstance {
   let trace = stackTrace.get();
   let name = trace[1].getFileName();
   return fileLogger(name);
