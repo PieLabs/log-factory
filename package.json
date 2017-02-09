@@ -15,7 +15,8 @@
     "@types/stack-trace": "0.0.28",
     "@types/winston": "^2.2.0",
     "chai": "^3.5.0",
-    "gulp": "^3.9.1",
+    "gulp": "github:gulpjs/gulp#4.0",
+    "gulp-mocha": "^3.0.1",
     "gulp-shell": "^0.5.2",
     "gulp-sourcemaps": "^2.4.1",
     "gulp-tslint": "^7.1.0",
@@ -29,7 +30,8 @@
     "typescript": "^2.1.6"
   },
   "scripts": {
-    "main": "gulp buildrun",
-    "test": "gulp build && mocha"
+    "main": "./node_modules/.bin/gulp build",
+    "test": "./node_modules/.bin/gulp build && ./node_modules/.bin/mocha",
+    "live-test": "./node_modules/.bin/gulp watch"
   }
 }

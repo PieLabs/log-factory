@@ -39,7 +39,8 @@ export let init = (log): void => {
       setConfig(config);
     } catch (e) {
       if (fs.existsSync(log)) {
-        setConfigFromFile(log);
+        var cfg = JSON.parse(fs.readFileSync(log, 'utf8'));
+        setConfig(cfg);
       } else {
         console.error('can not configure logging using cli param value: ' + log);
       }
@@ -47,9 +48,14 @@ export let init = (log): void => {
   }
 };
 
+let setConfig = (cfg) => {
+  config = _.merge({}, config, cfg);
+  _.forIn(cfg, (value, key) => {
+    addLogger(key, value);
+  });
+};
 
 function addLogger(label, level?: string): winston.LoggerInstance {
-
   level = level ? level : config['default'] || 'info';
   let cfg = mkLogConfig(label, level);
   let logger;
@@ -77,18 +83,6 @@ export let setDefaultLevel = (l) => {
   });
 };
 
-let setConfigFromFile = (configPath) => {
-  var cfg = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-  logger.debug(cfg);
-  setConfig(cfg);
-};
-
-let setConfig = (cfg) => {
-  config = _.merge({}, config, cfg);
-  _.forIn(cfg, (value, key) => {
-    addLogger(key, value);
-  });
-};
 
 /** get a logger and give it a name */
 export let getLogger = (id: string): winston.LoggerInstance => {

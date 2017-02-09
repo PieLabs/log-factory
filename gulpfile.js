@@ -6,39 +6,37 @@ const tslint = require('gulp-tslint');
 const { remove } = require('fs-extra');
 const merge = require('merge2');
 const sourcemaps = require('gulp-sourcemaps');
-
-const paths = {
-  tscripts: {
-    src: ['src/**/*.ts'],
-    dest: 'lib'
-  }
-};
+const tsProject = ts.createProject('tsconfig.json');
+const mocha = require('gulp-mocha');
 
 gulp.task('default', done => runseq('clean', 'build', done));
-
-// ** Running ** //
-
-gulp.task('run', shell.task([
-  'node lib/index.js'
-]));
 
 gulp.task('clean', done => {
   remove('./lib', done);
 });
 
-// ** Watching ** //
-
-gulp.task('watch', function () {
-  gulp.watch(paths.tscripts.src, ['compile:typescript']);
+gulp.task('live-test', () => {
+  return gulp.src('test/**/*.js', { read: false })
+    .pipe(mocha())
+    .on('error', () => { });
 });
 
-gulp.task('watchrun', function () {
-  gulp.watch(paths.tscripts.src, runseq('compile:typescript', 'run'));
+gulp.task('test', () => {
+  return gulp.src('test/**/*.js', { read: false })
+    .pipe(mocha())
+    .once('error', () => {
+      process.exit(1);
+    })
+    .once('end', () => {
+      process.exit();
+    })
 });
 
-let tsProject = ts.createProject('tsconfig.json');
-
-// ** Compilation ** //
+gulp.task('watch', () => {
+  return gulp.watch(
+    ['src/**/*.ts', 'test/**/*.js'],
+    gulp.series('build', 'live-test'));
+});
 
 gulp.task('build', function () {
 

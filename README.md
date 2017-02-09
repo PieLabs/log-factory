@@ -1,43 +1,18 @@
 # log-factory
 
-An awesome MVC typescript project, that displays Hello World.
+A little log library that makes it simple to add a logger to your module.
 
-## Links
+```javascript
 
-- Source: 
-- Bugs:
-- Documentation: [http://thirdlink.whatnot/whatever](http://loldamn.com/wp-content/uploads/2014/02/funny-little-fat-puppies-food.jpg)
+import {buildLogger} from 'log-factory';
+let logger = buildLogger();
 
-## Project Setup
+```
 
-This project uses [gulp](http://gulpjs.com/) as its build system. 
+# test
 
-- Install gulp: `$ npm install -g gulp`
+`npm test`
 
-1. Install dependencies: `$ npm install`
-2. Build and run: `$ gulp buildrun`
+# build 
 
-
-## Testing
-
-This project usings [mocha](http://visionmedia.github.io/mocha/) for unit testing. Install mocha:
-
-- `$ npm install -g mocha`
-
-To compile and test run:
-
--  `$ gulp && mocha`
-
-## Troubleshooting & Useful Tools
-
-_Examples of common tasks_
-
-> e.g.
-> 
-> - How to make curl requests while authenticated via oauth.
-> - How to monitor background jobs.
-> - How to run the app through a proxy.
-
-## License
-
-MIT
+`npm run main`
