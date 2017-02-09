@@ -1,6 +1,6 @@
 {
   "name": "log-factory",
-  "version": "0.0.0",
+  "version": "0.0.1-prerelease",
   "author": "",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -24,6 +24,7 @@
     "merge2": "^1.0.3",
     "mocha": "*",
     "proxyquire": "^1.7.11",
+    "release-helper": "PieLabs/release-helper#v1.3.0",
     "run-sequence": "^1.2.2",
     "sinon": "^1.17.7",
     "tslint": "^4.4.2",

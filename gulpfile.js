@@ -8,6 +8,9 @@ const merge = require('merge2');
 const sourcemaps = require('gulp-sourcemaps');
 const tsProject = ts.createProject('tsconfig.json');
 const mocha = require('gulp-mocha');
+const releaseHelper = require('release-helper');
+
+releaseHelper.init(gulp);
 
 gulp.task('default', done => runseq('clean', 'build', done));
 
