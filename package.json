@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "author": "",
   "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "dependencies": {
     "fs-extra": "^2.0.0",
     "lodash": "^4.17.4",
