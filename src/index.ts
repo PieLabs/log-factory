@@ -13,7 +13,7 @@ let mkLogConfig = (label: string, level: string) => {
   return {
     level: level,
     transports: [
-      new (winston.transports.Console)({ colorize: true, label: label })
+      new (winston.transports.Console)({ colorize: true, label: label, timestamp: true })
     ]
   }
 }
@@ -110,12 +110,12 @@ export let fileLogger = (filename): winston.LoggerInstance => {
 
 /**
  * Create a logger and automatically name it by using the filename of the call site.
- * Eg: 
+ * Eg:
  * ```
  * //my-file.js
  * import {buildLogger} from 'log-factory';
  * let logger = buildLogger();
- * logger.info('hi') //=> emits [INFO] [my-file] hi 
+ * logger.info('hi') //=> emits [INFO] [my-file] hi
  * ```
  */
 export function buildLogger(): winston.LoggerInstance {
