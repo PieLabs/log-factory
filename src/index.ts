@@ -1,26 +1,54 @@
-import * as winston from 'winston';
-import * as path from 'path';
 import * as _ from 'lodash';
+import * as dateFormat from 'dateformat';
 import * as fs from 'fs';
+import * as path from 'path';
 import * as stackTrace from 'stack-trace';
+import * as winston from 'winston';
+
 //levels: error > warn > info > verbose > debug > silly
 
 let config = {
   'default': 'info'
 };
 
-let mkLogConfig = (label: string, level: string) => {
+const mkLogConfig = (label: string, level: string) => {
   return {
     level: level,
     transports: [
-      new (winston.transports.Console)({ colorize: true, label: label })
+      new (winston.transports.Console)({
+        colorize: true,
+        label: label,
+        timestamp: () => {
+          var now = new Date();
+          return dateFormat(now, 'HH:MM:ss.l');
+        }
+      })
     ]
-  }
-}
+  };
+};
 
 const logger = addLogger('LOG_FACTORY');
 
-export let init = (log): void => {
+const setConfig = (cfg) => {
+  config = _.merge({}, config, cfg);
+  _.forIn(cfg, (value, key) => {
+    addLogger(key, value);
+  });
+};
+
+const isLogLevel = (l): Boolean => _.includes(['error', 'warn', 'info', 'verbose', 'debug', 'silly'], l);
+
+export const setDefaultLevel = (l) => {
+  config = _.merge(config, { 'default': l });
+  logger.debug('default level now: ', config['default']);
+  _.forEach(winston.loggers.loggers, (value, key) => {
+    let logger = winston.loggers.get(key);
+    let cfg = mkLogConfig(key, config['default']);
+    logger.configure(cfg);
+  });
+};
+
+export const init = (log): void => {
 
   logger.debug('init: ', log);
 
@@ -48,12 +76,6 @@ export let init = (log): void => {
   }
 };
 
-let setConfig = (cfg) => {
-  config = _.merge({}, config, cfg);
-  _.forIn(cfg, (value, key) => {
-    addLogger(key, value);
-  });
-};
 
 function addLogger(label, level?: string): winston.LoggerInstance {
   level = level ? level : config['default'] || 'info';
@@ -69,23 +91,8 @@ function addLogger(label, level?: string): winston.LoggerInstance {
   return logger;
 }
 
-
-let isLogLevel = (l): Boolean => _.includes(['error', 'warn', 'info', 'verbose', 'debug', 'silly'], l);
-
-
-export let setDefaultLevel = (l) => {
-  config = _.merge(config, { 'default': l });
-  logger.debug('default level now: ', config['default']);
-  _.forEach(winston.loggers.loggers, (value, key) => {
-    let logger = winston.loggers.get(key);
-    let cfg = mkLogConfig(key, config['default']);
-    logger.configure(cfg);
-  });
-};
-
-
 /** get a logger and give it a name */
-export let getLogger = (id: string): winston.LoggerInstance => {
+export const getLogger = (id: string): winston.LoggerInstance => {
   var existing = winston.loggers.has(id);
 
   if (existing) {
@@ -96,7 +103,7 @@ export let getLogger = (id: string): winston.LoggerInstance => {
 };
 
 /** get a logger and name it by it's file name. */
-export let fileLogger = (filename): winston.LoggerInstance => {
+export const fileLogger = (filename): winston.LoggerInstance => {
   var label;
   var parsed = path.parse(filename);
 
@@ -106,7 +113,7 @@ export let fileLogger = (filename): winston.LoggerInstance => {
     label = parsed.name;
   }
   return getLogger(label);
-}
+};
 
 /**
  * Create a logger and automatically name it by using the filename of the call site.
@@ -123,5 +130,3 @@ export function buildLogger(): winston.LoggerInstance {
   let name = trace[1].getFileName();
   return fileLogger(name);
 }
-
-

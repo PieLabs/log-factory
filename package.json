@@ -5,6 +5,8 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "dependencies": {
+    "@types/winston": "^2.2.0",
+    "dateformat": "^2.0.0",
     "lodash": "^4.17.4",
     "stack-trace": "0.0.9",
     "winston": "^2.3.1"
@@ -13,7 +15,6 @@
     "@types/fs-extra": "0.0.37",
     "@types/lodash": "^4.14.52",
     "@types/stack-trace": "0.0.28",
-    "@types/winston": "^2.2.0",
     "chai": "^3.5.0",
     "gulp": "github:gulpjs/gulp#4.0",
     "gulp-mocha": "^3.0.1",

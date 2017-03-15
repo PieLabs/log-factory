@@ -12,7 +12,6 @@ const releaseHelper = require('release-helper');
 
 //TODO: Add releaseHelper.init(gulp); - once it works w/ gulp 4.0
 
-gulp.task('default', done => runseq('clean', 'build', done));
 
 gulp.task('clean', done => {
   remove('./lib', done);
@@ -24,13 +23,15 @@ gulp.task('live-test', () => {
     .on('error', () => { });
 });
 
-gulp.task('test', () => {
+gulp.task('test', (done) => {
   return gulp.src('test/**/*.js', { read: false })
     .pipe(mocha())
-    .once('error', () => {
+    .once('error', (e) => {
+      done(e);
       process.exit(1);
     })
     .once('end', () => {
+      done();
       process.exit();
     })
 });
@@ -61,4 +62,7 @@ gulp.task('build', function () {
 });
 
 
+gulp.task('default', gulp.series('clean', 'build', (done) => {
+  done();
+}));
 
