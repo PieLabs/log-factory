@@ -7,27 +7,58 @@ import * as winston from 'winston';
 
 //levels: error > warn > info > verbose > debug > silly
 
+type LogFactoryOpts = {
+  console: boolean,
+  file?: string,
+  log?: any
+};
+
+const moduleOpts = {
+  console: true,
+  file: null,
+  log: 'info'
+};
+
 let config = {
   'default': 'info'
 };
 
-const mkLogConfig = (label: string, level: string) => {
-  return {
-    level: level,
-    transports: [
-      new (winston.transports.Console)({
-        colorize: true,
-        label: label,
-        timestamp: () => {
-          var now = new Date();
-          return dateFormat(now, 'HH:MM:ss.l');
-        }
-      })
-    ]
-  };
+const timestamp = () => {
+  var now = new Date();
+  return dateFormat(now, 'HH:MM:ss.l');
 };
 
-const logger = addLogger('LOG_FACTORY');
+const consoleTransport = (label: string): winston.TransportInstance => {
+  return new (winston.transports.Console)({
+    colorize: true,
+    label: label,
+    timestamp
+  });
+};
+
+const fileTransport = (label: string): winston.TransportInstance => {
+  return new winston.transports.File({
+    colorize: false,
+    json: false,
+    filename: moduleOpts.file,
+    label,
+    timestamp
+  });
+};
+
+const mkLogConfig = (label: string, level: string) => {
+
+  const addConsole = !moduleOpts.file && moduleOpts.console;
+
+  const transports: winston.TransportInstance[] = [
+    addConsole ? consoleTransport(label) : null,
+    moduleOpts.file ? fileTransport(label) : null
+  ].filter(t => t !== null);
+
+
+  return { level, transports };
+};
+
 
 const setConfig = (cfg) => {
   config = _.merge({}, config, cfg);
@@ -40,7 +71,6 @@ const isLogLevel = (l): Boolean => _.includes(['error', 'warn', 'info', 'verbose
 
 export const setDefaultLevel = (l) => {
   config = _.merge(config, { 'default': l });
-  logger.debug('default level now: ', config['default']);
   _.forEach(winston.loggers.loggers, (value, key) => {
     let logger = winston.loggers.get(key);
     let cfg = mkLogConfig(key, config['default']);
@@ -48,9 +78,13 @@ export const setDefaultLevel = (l) => {
   });
 };
 
-export const init = (log): void => {
+export const init = (opts: LogFactoryOpts): void => {
 
-  logger.debug('init: ', log);
+  moduleOpts.console = opts.console;
+  moduleOpts.file = opts.file;
+  moduleOpts.log = opts.log || moduleOpts.log;
+
+  const { log } = moduleOpts;
 
   if (!log) {
     return;
@@ -63,7 +97,6 @@ export const init = (log): void => {
   } else {
     try {
       let config = JSON.parse(log);
-      logger.debug('parsed log: ', log);
       setConfig(config);
     } catch (e) {
       if (fs.existsSync(log)) {
@@ -76,8 +109,8 @@ export const init = (log): void => {
   }
 };
 
-
 function addLogger(label, level?: string): winston.LoggerInstance {
+
   level = level ? level : config['default'] || 'info';
   let cfg = mkLogConfig(label, level);
   let logger;
