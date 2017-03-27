@@ -1,6 +1,6 @@
 {
   "name": "log-factory",
-  "version": "1.1.0-prerelease",
+  "version": "1.0.0-prerelease",
   "author": "",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
