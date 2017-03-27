@@ -7,24 +7,55 @@ import * as winston from 'winston';
 
 //levels: error > warn > info > verbose > debug > silly
 
+type LogFactoryOpts = {
+  console: boolean,
+  file?: string,
+  log?: any
+};
+
+const moduleOpts = {
+  console: true,
+  file: null,
+  log: 'INFO'
+};
+
 let config = {
   'default': 'info'
 };
 
+const timestamp = () => {
+  var now = new Date();
+  return dateFormat(now, 'HH:MM:ss.l');
+};
+
+const consoleTransport = (label: string): winston.TransportInstance => {
+  return new (winston.transports.Console)({
+    colorize: true,
+    label: label,
+    timestamp
+  });
+};
+
+const fileTransport = (label: string): winston.TransportInstance => {
+  return new winston.transports.File({
+    colorize: false,
+    json: false,
+    filename: moduleOpts.file,
+    label,
+    timestamp
+  });
+};
+
 const mkLogConfig = (label: string, level: string) => {
-  return {
-    level: level,
-    transports: [
-      new (winston.transports.Console)({
-        colorize: true,
-        label: label,
-        timestamp: () => {
-          var now = new Date();
-          return dateFormat(now, 'HH:MM:ss.l');
-        }
-      })
-    ]
-  };
+
+  const addConsole = !moduleOpts.file && moduleOpts.console;
+
+  const transports: winston.TransportInstance[] = [
+    addConsole ? consoleTransport(label) : null,
+    moduleOpts.file ? fileTransport(label) : null
+  ].filter(t => t !== null);
+
+  return { level, transports };
 };
 
 const logger = addLogger('LOG_FACTORY');
@@ -48,9 +79,15 @@ export const setDefaultLevel = (l) => {
   });
 };
 
-export const init = (log): void => {
+export const init = (opts: LogFactoryOpts): void => {
 
-  logger.debug('init: ', log);
+  logger.debug('init: ', opts);
+
+  moduleOpts.console = opts.console;
+  moduleOpts.file = opts.file;
+  moduleOpts.log = opts.log;
+
+  const { log } = moduleOpts;
 
   if (!log) {
     return;
@@ -76,8 +113,8 @@ export const init = (log): void => {
   }
 };
 
-
 function addLogger(label, level?: string): winston.LoggerInstance {
+
   level = level ? level : config['default'] || 'info';
   let cfg = mkLogConfig(label, level);
   let logger;
