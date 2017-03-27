@@ -36,6 +36,8 @@ The options for `init` are:
   * json-string - a string that can be parsed as json 
   * path-to-json - a path to a json file 
 
+
+> If you want to disable logging you can pass in: `{ console: false, file: undefined}`
 If using json you can define levels for different categories. For example: 
 
 ```json 

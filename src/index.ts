@@ -16,7 +16,7 @@ type LogFactoryOpts = {
 const moduleOpts = {
   console: true,
   file: null,
-  log: 'INFO'
+  log: 'info'
 };
 
 let config = {
@@ -55,10 +55,10 @@ const mkLogConfig = (label: string, level: string) => {
     moduleOpts.file ? fileTransport(label) : null
   ].filter(t => t !== null);
 
+
   return { level, transports };
 };
 
-const logger = addLogger('LOG_FACTORY');
 
 const setConfig = (cfg) => {
   config = _.merge({}, config, cfg);
@@ -71,7 +71,6 @@ const isLogLevel = (l): Boolean => _.includes(['error', 'warn', 'info', 'verbose
 
 export const setDefaultLevel = (l) => {
   config = _.merge(config, { 'default': l });
-  logger.debug('default level now: ', config['default']);
   _.forEach(winston.loggers.loggers, (value, key) => {
     let logger = winston.loggers.get(key);
     let cfg = mkLogConfig(key, config['default']);
@@ -81,11 +80,9 @@ export const setDefaultLevel = (l) => {
 
 export const init = (opts: LogFactoryOpts): void => {
 
-  logger.debug('init: ', opts);
-
   moduleOpts.console = opts.console;
   moduleOpts.file = opts.file;
-  moduleOpts.log = opts.log;
+  moduleOpts.log = opts.log || moduleOpts.log;
 
   const { log } = moduleOpts;
 
@@ -100,7 +97,6 @@ export const init = (opts: LogFactoryOpts): void => {
   } else {
     try {
       let config = JSON.parse(log);
-      logger.debug('parsed log: ', log);
       setConfig(config);
     } catch (e) {
       if (fs.existsSync(log)) {
