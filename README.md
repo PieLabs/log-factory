@@ -9,17 +9,21 @@ let logger = buildLogger();
 
 ```
 
+The logger will be named after the module that called `buildLogger`. So if your file was called `utils/index.js` the logger category will be `[utils]`.
+
 ### Configuration
+
+By default logging targets the console with a `level` of `info`. You can change this by calling `init`.
 
 ```javascript 
 
   import {init} from 'log-factory';
 
   /**
-   * Calling init will only affect loggers after this call.
-   * So it is advisable to call this at the start of your app 
+   * Will only affect loggers created after the call to init.
+   * It is advisable to call this at the start of your app 
+   * before any log instances have been created.
    */
-
    init({
      console: false,
      file: 'my-log.log',
@@ -37,7 +41,8 @@ The options for `init` are:
   * path-to-json - a path to a json file 
 
 
-> If you want to disable logging you can pass in: `{ console: false, file: undefined}`
+> If you want to disable logging you can pass in: `{console: false, file: undefined}`
+
 If using json you can define levels for different categories. For example: 
 
 ```json 
