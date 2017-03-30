@@ -1,6 +1,6 @@
 # log-factory
 
-A little log library that makes it simple to add a logger to your module.
+A little log library that makes it simple to add [winston](https://github.com/winstonjs/winston) loggers to your module.
 
 ```javascript
 
@@ -9,7 +9,7 @@ let logger = buildLogger();
 
 ```
 
-The logger will be named after the module that called `buildLogger`. So if your file was called `utils/index.js` the logger category will be `[utils]`.
+The logger category is named after the module that called `buildLogger`. So if your file was called `utils/index.js` the logger category will be `[utils]`.
 
 ### Configuration
 
